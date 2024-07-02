@@ -11,3 +11,5 @@
 {"level":"info","message":"/api/users/signup - {\"email\":\"user2@gmail.com\",\"password\":\"password2\",\"name\":\"seller user2\",\"type\":\"seller\"}}","service":"request-logging"}
 {"level":"info","message":"/api/users/signup - {\"email\":\"user2@gmail.com\",\"password\":\"password2\",\"name\":\"seller user2\",\"type\":\"seller\"}}","service":"request-logging"}
 {"level":"info","message":"/api/users/signup - {\"email\":\"user2@gmail.com\",\"password\":\"password2\",\"name\":\"seller user2\",\"type\":\"seller\"}}","service":"request-logging"}
+{"level":"info","message":"/api/users/signup - {\"email\":\"user3@gmail.com\",\"password\":\"password3\",\"name\":\"seller 3\",\"type\":\"seller\"}}","service":"request-logging"}
+{"level":"info","message":"/api/users/signup - {\"email\":\"user4@gmail.com\",\"password\":\"password4\",\"name\":\"seller 4\",\"type\":\"seller\"}}","service":"request-logging"}
