@@ -1,6 +1,5 @@
 import UserModel from "../user/user.model.js";
 import ProductModel from "./product.model.js";
-
 export default class ProductController{
 
     getAllProducts(req,res){

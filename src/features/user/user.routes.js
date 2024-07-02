@@ -12,12 +12,13 @@ const userController = new UserController();
 // localhost/api/user 
 userRouter.post(
     '/signup', 
-userController.signUp
+(req,res)=>{userController.signUp(req,res)}
 );
 
 userRouter.post(
-    '/signin', 
-userController.signIn
+    '/signin',  
+    (req,res)=>{userController.signIn(req,res)}
+
 );
 
 export default userRouter;
