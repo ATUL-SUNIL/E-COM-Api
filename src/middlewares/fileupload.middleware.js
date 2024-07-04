@@ -1,15 +1,13 @@
+import multer from "multer";
 
-// 1. Import multer.
-import multer from 'multer';
-
-// 2. Configure storage with filename and location.
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{
-        cb(null, './uploads/');
+        cb(null,'./uploads/');
     },
     filename:(req, file, cb)=>{
-        cb(null, new Date().toISOString() + file.originalname);
-    },
+        console.log(file);
+        const uniqueName = new Date().toISOString().replace(/:/g, '-') + file.originalname;
+        cb(null, uniqueName);    },
 });
 
 export const upload = multer({

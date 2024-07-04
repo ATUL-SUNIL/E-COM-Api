@@ -1,8 +1,8 @@
 import UserModel from "../user/user.model.js";
 import { ApplicationError } from "../../error-handler/applicationEror.js";
 export default class ProductModel{
-    constructor(id, name, desc, price, imageUrl, category, sizes){
-        this.id = id;
+    constructor(name, desc, price, imageUrl, category, sizes,id){
+        this._id = id;
         this.name = name;
         this.desc = desc;
         this.price = price;
@@ -11,21 +11,21 @@ export default class ProductModel{
         this.sizes = sizes;
     }
     
-    static add(product){
-      product.id = products.length + 1;
-      products.push(product);
-      return product;
-    }
+    // static add(product){
+    //   product.id = products.length + 1;
+    //   products.push(product);
+    //   return product;
+    // }
 
-    static get(id){
-      const product = products.find((i)=>i.id ==id);
-      return product;
+    // static get(id){
+    //   const product = products.find((i)=>i.id ==id);
+    //   return product;
 
-    }
+    // }
 
-    static getAll(){
-        return products;
-    }
+    // static getAll(){
+    //     return products;
+    // }
 
     static filter(minPrice, maxPrice, category){
       const result = products.filter((product)=>{

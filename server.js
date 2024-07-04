@@ -1,3 +1,5 @@
+//import evironment config
+import "./env.js";
 // 1. Import express
 import express from 'express';
 import jwtAuth from './src/middlewares/jwt.middleware.js';
@@ -13,6 +15,9 @@ import { ApplicationError } from './src/error-handler/applicationEror.js';
 import {connectToMongoDB} from './src/config/mongodb.js';
 // 2. Create Server
 const server = express();
+
+//load all environment variables in applications
+
 server.use(express.json());
 
         //*CORS policy configuration without library*

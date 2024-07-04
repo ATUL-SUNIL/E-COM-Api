@@ -56,8 +56,8 @@
                 const result=await bcrypt.compare(req.body.password,user.password)
                 if(result){
                     //1. create token
-                    const token=jwt.sign({userId:result.id,email:result.email},
-                    'LAssfftijYn8kAHktJp0gHcx0CHU4tsn',
+                    const token=jwt.sign({userId:user._id,email:user.email},
+                    process.env.JWT_SECRET,
                     {expiresIn:'1h'})
             //2. send token
                     return res.status(200).send(token);
