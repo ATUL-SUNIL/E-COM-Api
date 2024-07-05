@@ -41,13 +41,13 @@ export default class ProductController{
     }
 }
 
-    rateProduct(req,res){
+    async rateProduct(req,res){
         
         try {
             const userId=req.userId;
-            const productId=req.query.productId;
-            const rating=req.query.rating;
-            this.productRepository.rate(
+            const productId=req.body.productId;
+            const rating=req.body.rating;
+            await this.productRepository.rate(
                 userId,
                 productId,
                 rating

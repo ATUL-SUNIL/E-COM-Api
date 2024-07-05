@@ -7,6 +7,16 @@ export default class UserModel{
         this.password=password;
         this.type=type;
     }
+}
+
+
+
+
+
+
+
+
+
     // static async signUp(name,email,password,type){
     //     try{
     //     //1.get db
@@ -28,10 +38,10 @@ export default class UserModel{
     // }
 
 
-        static getAll(){
-            return users;
-        }
-}
+        // static getAll(){
+        //     return users;
+        // }
+
 
 
 //for before mongoDB

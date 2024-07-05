@@ -60,7 +60,10 @@ class ProductRepository{
                 
                 filterExpression.category=category;
             }
-            return collection.find(filterExpression).toArray();
+            return collection.find(filterExpression)
+            //.project({name:1,price:1}) only send name and proce attributes for exclusion give 0
+            //$slice for limiting number 
+            .toArray();
         } catch (err) {
             console.log(err);
             throw new ApplicationError
@@ -68,16 +71,61 @@ class ProductRepository{
         }
     }
 
-    rate(userId,productId,rating){
+    // async rate(userId,productId,rating){
+    //     try {
+    //         const db=getDB();
+    //         const collection=db.collection(this.colection);
+
+    //         //find product
+    //         const product=await collection.findOne({_id:new ObjectId(productId)});
+    //         //find rating
+    //         const userRating=product?.ratings.find(r=>r.userId==userId)
+            
+    //         if (userRating) {
+    //             //update rating
+    //             await collection.updateOne({
+    //                 _id:new ObjectId(productId),
+    //                 "ratings.userId":new ObjectId(userId)
+    //             },
+    //             {
+    //                 $set:{
+    //                     "ratings.$.rating":rating
+    //                 }
+    //             } )
+    //         } else {
+    //             await collection.updateOne({
+    //                 _id:new ObjectId(productId)
+    //             },{
+    //                 $push:{ratings:{userId:new ObjectId(userId),
+    //                     rating}}
+    //             })    
+    //         }
+                    
+    //     } catch (err) {
+    //         console.log(err);
+    //         throw new ApplicationError
+    //             ("something went wrong with database",500)
+    //     }
+    // }
+//another approach to avoid race condition
+    async rate(userId,productId,rating){
         try {
             const db=getDB();
             const collection=db.collection(this.colection);
-            collection.updateOne({
+            //1.remove existing entry
+            await collection.updateOne({
+                _id:new ObjectId(productId)
+            },{
+                $pull:{ratings:{userId:new ObjectId(userId)}}
+            })    
+            //2. add new entry
+            await collection.updateOne({
                 _id:new ObjectId(productId)
             },{
                 $push:{ratings:{userId:new ObjectId(userId),
                     rating}}
-            })            
+            })    
+                    
         } catch (err) {
             console.log(err);
             throw new ApplicationError
