@@ -8,6 +8,8 @@ import cors from 'cors'
 import productRouter from './src/features/product/product.routes.js';
 import userRouter from './src/features/user/user.routes.js';
 import cartRouter from './src/features/cart/cartItems.routes.js';
+import orderRouter from "./src/features/order/order.router.js";
+
 import swagger from 'swagger-ui-express';
 import apiDocs from './swagger.json' assert {type:'json'};
 import loggerMiddleware from './src/middlewares/logger.middleware.js';
@@ -50,6 +52,8 @@ server.use(loggerMiddleware);
 server.use("/api/users",userRouter)
 server.use("/api/cartItems",jwtAuth,cartRouter);
 server.use("/api/products",jwtAuth,productRouter);
+server.use("/api/orders",jwtAuth,orderRouter)
+
 
 // 3. Default request handler
 server.get('/', (req, res)=>{

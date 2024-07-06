@@ -1,0 +1,12 @@
+place order
+
+1. get cart items of user,calculate total amount
+2.create a record for order
+3.reduce stock(products quantity)
+4. clear cart
+//if one of the operations fail it should revert all other ie use transaction
+
+////////
+5.dedict payment
+6.inform seller
+7.inform coureir

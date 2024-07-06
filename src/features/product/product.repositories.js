@@ -133,6 +133,27 @@ class ProductRepository{
         }
     }
 
+    async averageProductPricePerCategory(){
+        try {
+        const db=getDB();
+        const collection =db.collection(this.colection);
+        return await collection.aggregate([{
+            //stage 1 get avg price per category
+            $group:{
+                _id:"$category",
+                averagePrice:{
+                    $avg:"$price"
+                }
+            }
+        }]).toArray();
+
+        } catch (err) {
+            console.log(err);
+            throw new ApplicationError
+                ("something went wrong with database",500)
+        }
+    }
+
 }
 
 export default ProductRepository;
