@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from "mongodb"; 
+import { MongoClient, ObjectId } from "mongodb";
 
 
 const url=process.env.DB_URL;
