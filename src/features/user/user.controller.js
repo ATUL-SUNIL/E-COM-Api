@@ -23,7 +23,7 @@
 //                  for jwt
  import UserModel from "./user.model.js";
  import jwt from 'jsonwebtoken';
- import UserRepository from "./user.repositories.js";
+ import UserRepository from "./user.repository.js";
  import { ApplicationError } from "../../error-handler/applicationEror.js";
  import bcrypt from 'bcrypt'
  export default class UserController{
@@ -31,17 +31,18 @@
     constructor(){
         this.userRepository=new UserRepository;
     }
-    async signUp(req,res){
+    async signUp(req,res,next){
         try{
         const{name,email,password,type}=req.body;
         const hashedPassword=await bcrypt.hash(password,12);
         const user=new UserModel(name,email,hashedPassword,type);
         
-        await this.userRepository.signUp(user);
+        await this.userRepository.signup(user);
         res.status(201).send(user);
         }catch(err){
+            next(err);
             console.log(err);
-            throw new ApplicationError("something went wrong",500)
+            // throw new ApplicationError("something went wrong",500)
         }
     }
 
@@ -71,5 +72,18 @@
         // next(err);
         throw new ApplicationError("something went wrong",500)
     }
+    }
+
+    async resetPassword(req,res,next){
+        const {newPassword}=req.body;
+        const userId=req.userId;
+        const hashedPassword=await bcrypt.hash(newPassword,12);
+        try {
+            await this.userRepository.resetPassword(userId,hashedPassword);
+            res.status(200).send("password is reset")
+        } catch (err) {
+            console.log(err);
+            throw new ApplicationError("something went wrong",500)
+        }
     }
  }

@@ -16,6 +16,7 @@ import loggerMiddleware from './src/middlewares/logger.middleware.js';
 import { ApplicationError } from './src/error-handler/applicationEror.js';
 import {connectToMongoDB} from './src/config/mongodb.js';
 import { connectUsingMongoose } from "./src/config/mongoose.config.js";
+import mongoose from "mongoose";
 // 2. Create Server
 const server = express();
 
@@ -63,6 +64,11 @@ server.get('/', (req, res)=>{
 //Error handler middleware
 server.use((err,req,res,next)=>{
     console.log(err);
+
+    if(err instanceof mongoose.Error.ValidationError){
+        res.status(400).send(err.message)
+        }
+
     if(err instanceof ApplicationError){
     res.status(err.code).send(err.message)
     }

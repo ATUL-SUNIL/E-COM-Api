@@ -3,7 +3,7 @@
 // 1. Import express.
 import express from 'express';
 import UserController from './user.controller.js';
-
+import jwtAuth from '../../middlewares/jwt.middleware.js';
 // 2. Initialize Express router.
 const userRouter = express.Router();
 const userController = new UserController();
@@ -12,7 +12,7 @@ const userController = new UserController();
 // localhost/api/user 
 userRouter.post(
     '/signup', 
-(req,res)=>{userController.signUp(req,res)}
+(req,res,next)=>{userController.signUp(req,res,next)}
 );
 
 userRouter.post(
@@ -20,5 +20,8 @@ userRouter.post(
     (req,res)=>{userController.signIn(req,res)}
 
 );
+
+userRouter.put('/resetPassword',jwtAuth,
+    (req,res,next)=>{userController.resetPassword(req,res,next)})
 
 export default userRouter;
