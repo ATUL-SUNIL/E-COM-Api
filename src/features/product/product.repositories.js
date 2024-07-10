@@ -1,20 +1,34 @@
 import { ObjectId } from "mongodb";
 import { getDB } from "../../config/mongodb.js";
 import { ApplicationError } from "../../error-handler/applicationEror.js";
+import mongoose from "mongoose";
+import { productSchema } from "./product.schema.js";
+import { reviewSchema } from "./reviews.schema.js";
+import { error } from "console";
+import { categorySchema } from "./category.schema.js";
+
+const productModel= mongoose.model('product',productSchema)
+const reviewModel= mongoose.model('review',reviewSchema)
+const categoryModel=mongoose.model('category',categorySchema)
 class ProductRepository{
 
     constructor(){
         this.colection="products";
     }
-    async add(newProduct){
+    async add(productData){
         try {
-            const db=getDB();
-
-            const collections =db.collection(this.colection);
-
-            await collections.insertOne(newProduct);
-            console.log(newProduct);
-            return newProduct;
+            
+            productData.categories=productData.category.split(',').map(e=>e.trim());;
+            console.log(productData)
+            const newProduct=new productModel(productData);
+            const savedProduct=newProduct.save()
+            
+            await categoryModel.updateMany({
+                _id:{$in:productData.categories}
+            },
+        {
+          $push:  {products: new ObjectId(savedProduct._id)}
+        })
         } catch (err) {
             console.log(err);
             throw new ApplicationError("something went wrong with database",500)
@@ -71,61 +85,32 @@ class ProductRepository{
         }
     }
 
-    // async rate(userId,productId,rating){
-    //     try {
-    //         const db=getDB();
-    //         const collection=db.collection(this.colection);
 
-    //         //find product
-    //         const product=await collection.findOne({_id:new ObjectId(productId)});
-    //         //find rating
-    //         const userRating=product?.ratings.find(r=>r.userId==userId)
-            
-    //         if (userRating) {
-    //             //update rating
-    //             await collection.updateOne({
-    //                 _id:new ObjectId(productId),
-    //                 "ratings.userId":new ObjectId(userId)
-    //             },
-    //             {
-    //                 $set:{
-    //                     "ratings.$.rating":rating
-    //                 }
-    //             } )
-    //         } else {
-    //             await collection.updateOne({
-    //                 _id:new ObjectId(productId)
-    //             },{
-    //                 $push:{ratings:{userId:new ObjectId(userId),
-    //                     rating}}
-    //             })    
-    //         }
-                    
-    //     } catch (err) {
-    //         console.log(err);
-    //         throw new ApplicationError
-    //             ("something went wrong with database",500)
-    //     }
-    // }
 //another approach to avoid race condition
     async rate(userId,productId,rating){
         try {
-            const db=getDB();
-            const collection=db.collection(this.colection);
-            //1.remove existing entry
-            await collection.updateOne({
-                _id:new ObjectId(productId)
-            },{
-                $pull:{ratings:{userId:new ObjectId(userId)}}
-            })    
-            //2. add new entry
-            await collection.updateOne({
-                _id:new ObjectId(productId)
-            },{
-                $push:{ratings:{userId:new ObjectId(userId),
-                    rating}}
-            })    
+            //check if product exists
+            const product=await productModel.findById(productId)
+            if(!product){
+                throw new Error("product not found")
+            } 
+            
+            //get existing review
+            const userReview=await reviewModel.findOne({
+                product: new ObjectId(productId),user:new ObjectId(userId)
+            })
+            if(userReview){
+                userReview.rating=rating;
+                await userReview.save()
+            }else{
+                const newReview=new reviewModel({
+                    product: new ObjectId(productId),
+                    user:new ObjectId(userId),
+                    rating:rating,
                     
+             })
+             await newReview.save()
+            }
         } catch (err) {
             console.log(err);
             throw new ApplicationError
@@ -157,3 +142,33 @@ class ProductRepository{
 }
 
 export default ProductRepository;
+
+
+
+
+
+//rate funcn before mongoose
+
+// async rate(userId,productId,rating){
+//     try {
+//         const db=getDB();
+//         const collection=db.collection(this.colection);
+//         //1.remove existing entry
+//         await collection.updateOne({
+//             _id:new ObjectId(productId)
+//         },{
+//             $pull:{ratings:{userId:new ObjectId(userId)}}
+//         })    
+//         //2. add new entry
+//         await collection.updateOne({
+//             _id:new ObjectId(productId)
+//         },{
+//             $push:{ratings:{userId:new ObjectId(userId),
+//                 rating}}
+//         })    
+                
+//     } catch (err) {
+//         console.log(err);
+//         throw new ApplicationError
+//             ("something went wrong with database",500)
+//     }

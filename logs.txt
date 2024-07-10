@@ -71,3 +71,22 @@
 {"level":"info","message":"/api/cartItems/ - {\"productId\":\"6685038679c001c0a4b4542e\",\"quantity\":5}}","service":"request-logging"}
 {"level":"info","message":"/api/orders - {}}","service":"request-logging"}
 {"level":"info","message":"/api/orders - {}}","service":"request-logging"}
+{"level":"info","message":"/api/products/rate - {\"productId\":\"6685038679c001c0a4b4542e\",\"rating\":4}}","service":"request-logging"}
+{"level":"info","message":"/api/products/rate - {\"productId\":\"6685038679c001c0a4b4542e\",\"rating\":3}}","service":"request-logging"}
+{"level":"info","message":"/api/products/rate - {\"productId\":\"6685038679c001c0a4b4542e\",\"rating\":3}}","service":"request-logging"}
+{"level":"info","message":"/api/products/rate - {\"productId\":\"6685038679c001c0a4b4542e\",\"rating\":3}}","service":"request-logging"}
+{"level":"info","message":"/api/products/rate - {\"productId\":\"6685038679c001c0a4b4542e\",\"rating\":3}}","service":"request-logging"}
+{"level":"info","message":"/api/products/rate - {\"productId\":\"6685038679c001c0a4b4542e\",\"rating\":2}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"Categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"Categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"Categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"category\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"category\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0\"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0 \"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0 \"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0 \"}}","service":"request-logging"}
+{"level":"info","message":"/api/products - {\"name\":\"amazon kindle\",\"price\":15000,\"description\":\"ebook\",\"categories\":\"668d68fe75d854ec506b04df,668d68fe75d854ec506b04e0 \"}}","service":"request-logging"}

@@ -20,15 +20,15 @@ export default class ProductController{
 
     async addProduct(req, res){
         try {
-        const {name,price,sizes} = req.body;
+        const {name,price,sizes,categories,description} = req.body;
 
         const newProduct = new ProductModel
         (name,
-        null,
+        description,
         parseFloat(price),     
-        req.file.filename,
-        null,
-        sizes.split(','));
+        req?.file?.filename,
+        categories,
+        sizes?.split(','));
 
         const createdRecord=await this.productRepository.add(newProduct);
         res.status(201).send(createdRecord);
