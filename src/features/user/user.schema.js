@@ -13,3 +13,7 @@ export const userSchema=new mongoose.Schema({
         }},
     type:{type:String,enum:['customer','seller']}
 })
+
+
+const UserModel = mongoose.model('User', userSchema);
+export default UserModel;
