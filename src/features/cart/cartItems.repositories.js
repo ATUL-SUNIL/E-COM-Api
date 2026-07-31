@@ -1,5 +1,6 @@
 import { ObjectId, ReturnDocument } from "mongodb";
 import { getDB } from "../../config/mongodb.js";
+import { ApplicationError } from "../../error-handler/applicationEror.js";
 export default class CartItemsRepositories{
     constructor(){
         this.collection="cartItems";
@@ -44,7 +45,8 @@ export default class CartItemsRepositories{
         try {
             const db=getDB();
             const collection=db.collection(this.collection)
-            const result=await collection.deleteOne({_id:new ObjectId(cartItemsId),userId:new ObjectId(userId)})
+            // cart item _id is a numeric counter value (see getNextCounter), not an ObjectId
+            const result=await collection.deleteOne({_id:Number(cartItemsId),userId:new ObjectId(userId)})
             return result.deletedCount>0;
         } catch (err) {
             console.log(err);

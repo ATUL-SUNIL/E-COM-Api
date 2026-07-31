@@ -5,6 +5,7 @@ export const productSchema=new mongoose.Schema({
     price:Number,
     category:String,
     description :String,
+    imageUrl:String,
     inStock:Number,
     reviews:[
         {

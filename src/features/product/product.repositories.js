@@ -17,18 +17,32 @@ class ProductRepository{
     }
     async add(productData){
         try {
-            
-            productData.categories=productData.category.split(',').map(e=>e.trim());;
-            console.log(productData)
+            const categoryNames=productData.category
+                .split(',')
+                .map(e=>e.trim())
+                .filter(Boolean);
+
+            const categoryIds=[];
+            for(const categoryName of categoryNames){
+                let category=await categoryModel.findOne({name:categoryName});
+                if(!category){
+                    category=await categoryModel.create({name:categoryName});
+                }
+                categoryIds.push(category._id);
+            }
+            productData.categories=categoryIds;
+
             const newProduct=new productModel(productData);
-            const savedProduct=newProduct.save()
-            
+            const savedProduct=await newProduct.save();
+
             await categoryModel.updateMany({
-                _id:{$in:productData.categories}
+                _id:{$in:categoryIds}
             },
         {
           $push:  {products: new ObjectId(savedProduct._id)}
         })
+
+        return savedProduct;
         } catch (err) {
             console.log(err);
             throw new ApplicationError("something went wrong with database",500)

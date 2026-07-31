@@ -2,6 +2,8 @@
 import "./env.js";
 // 1. Import express
 import express from 'express';
+// route async handlers that throw are forwarded to the error middleware (Express 4)
+import 'express-async-errors';
 import jwtAuth from './src/middlewares/jwt.middleware.js';
 import cors from 'cors'
 // import basicAuthorizer from './src/middlewares/basicAuth.middleware.js';
@@ -11,7 +13,7 @@ import cartRouter from './src/features/cart/cartItems.routes.js';
 import orderRouter from "./src/features/order/order.router.js";
 
 import swagger from 'swagger-ui-express';
-import apiDocs from './swagger.json' assert {type:'json'};
+import apiDocs from './swagger.json' with {type:'json'};
 import loggerMiddleware from './src/middlewares/logger.middleware.js';
 import { ApplicationError } from './src/error-handler/applicationEror.js';
 import {connectToMongoDB} from './src/config/mongodb.js';
@@ -48,6 +50,8 @@ server.use(express.json());
 // server.use("/api/products",basicAuthorizer,productRouter);
 //                  using jwt
 
+server.use("/uploads",express.static('uploads'))
+
 server.use("/api-docs",swagger.serve,swagger.setup(apiDocs))
 
 server.use(loggerMiddleware);
@@ -67,16 +71,12 @@ server.use((err,req,res,next)=>{
     console.log(err);
 
     if(err instanceof mongoose.Error.ValidationError){
-        res.status(400).send(err.message)
-        }
-
+        return res.status(400).send(err.message);
+    }
     if(err instanceof ApplicationError){
-    res.status(err.code).send(err.message)
+        return res.status(err.code).send(err.message);
     }
-    else{
-        res.status(500).send('something went wrong,please try again later')
-
-    }
+    return res.status(500).send('something went wrong,please try again later');
 })
 //4.middleware to handle 404
 server.use((req,res)=>{
@@ -87,5 +87,6 @@ server.use((req,res)=>{
 server.listen(3200,()=>{
     console.log("Server is running at 3200");
     connectUsingMongoose()
+    connectToMongoDB()
 });
 

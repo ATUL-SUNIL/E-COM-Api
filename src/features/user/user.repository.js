@@ -51,9 +51,9 @@ export default class UserRepository{
             let user=await userModel.findById(userId);
             if(user){
                 user.password=newPassword;
-                user.save();
+                await user.save();
             }else{
-                throw new Error("user not found");l
+                throw new Error("user not found");
             }
         } catch (err) {
             console.log(err);

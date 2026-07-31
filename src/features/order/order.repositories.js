@@ -33,7 +33,7 @@ export default class OrderRepository{
                     _id: item.productId
                 },
                 {
-                    $inc:{stock: -item.quantity}
+                    $inc:{inStock: -item.quantity}
                 },{session}
             )
             }
