@@ -22,15 +22,26 @@ const logger= winston.createLogger({
 
 })
 
-const loggerMiddleware=async(req,res,next)=>{
-    //1. Log request body
-    if(!req.url.includes('signin')){
-        
-    const logData=`${req.url} - ${JSON.stringify(req.body)}}`
-    logger.info(logData);
+// Never write secrets to the log — mask these fields anywhere in the body.
+const SENSITIVE_KEYS=['password','newPassword','currentPassword','token','authorization'];
+const redact=(body)=>{
+    if(!body || typeof body!=='object') return body;
+    const clone=Array.isArray(body)?[...body]:{...body};
+    for(const key of Object.keys(clone)){
+        if(SENSITIVE_KEYS.includes(key)){
+            clone[key]='[REDACTED]';
+        }else if(clone[key] && typeof clone[key]==='object'){
+            clone[key]=redact(clone[key]);
+        }
     }
-    next();
+    return clone;
+};
 
+const loggerMiddleware=async(req,res,next)=>{
+    //1. Log request (body with sensitive fields masked)
+    const logData=`${req.method} ${req.url} - ${JSON.stringify(redact(req.body))}`;
+    logger.info(logData);
+    next();
 }
 
 export default loggerMiddleware;

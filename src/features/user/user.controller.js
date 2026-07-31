@@ -26,6 +26,7 @@
  import UserRepository from "./user.repository.js";
  import { ApplicationError } from "../../error-handler/applicationEror.js";
  import bcrypt from 'bcrypt'
+ const PASSWORD_PATTERN=/^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/;
  export default class UserController{
 
     constructor(){
@@ -34,11 +35,15 @@
     async signUp(req,res,next){
         try{
         const{name,email,password,type}=req.body;
+        if(!PASSWORD_PATTERN.test(password)){
+            return res.status(400).send("password should be 8-12 characters and have a special character");
+        }
         const hashedPassword=await bcrypt.hash(password,12);
         const user=new UserModel(name,email,hashedPassword,type);
         
         await this.userRepository.signup(user);
-        res.status(201).send(user);
+        // never return the password (even hashed)
+        res.status(201).send({name:user.name,email:user.email,type:user.type});
         }catch(err){
             next(err);
             console.log(err);
@@ -77,6 +82,9 @@
     async resetPassword(req,res,next){
         const {newPassword}=req.body;
         const userId=req.userId;
+        if(!PASSWORD_PATTERN.test(newPassword)){
+            return res.status(400).send("password should be 8-12 characters and have a special character");
+        }
         const hashedPassword=await bcrypt.hash(newPassword,12);
         try {
             await this.userRepository.resetPassword(userId,hashedPassword);

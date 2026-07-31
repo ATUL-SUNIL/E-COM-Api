@@ -9,9 +9,8 @@ const jwtAuth=(req,res,next)=>{
     }
     //3.check if token is valid
     try {
-        const payload=jwt.verify(token,'LAssfftijYn8kAHktJp0gHcx0CHU4tsn');
+        const payload=jwt.verify(token,process.env.JWT_SECRET);
         req.userId=payload.userId;
-        console.log(payload);
     } catch (error) {
         return res.status(401).send('unauthorised');
     }
