@@ -9,16 +9,15 @@ export class LikeController{
         try {
             const {id,type}=req.body;
             const userId=req.userId;
-            if(type!='product' && type!='catrgory'){
-                return res.status(400).send('Invalid type')
-            }
-            if(type=='product'){
-                const like=await this.likeRepository.likeProduct(userId,id)
-                return res.status(200).send(like);
-            }
-            if(type=='category'){
-                const like=await this.likeRepository.likeCategory(userId,id)
-                return res.status(200).send(like);
+            // A switch with a default guarantees every path sends a response —
+            // no value can slip through and leave the connection hanging.
+            switch(type){
+                case 'product':
+                    return res.status(200).send(await this.likeRepository.likeProduct(userId,id));
+                case 'category':
+                    return res.status(200).send(await this.likeRepository.likeCategory(userId,id));
+                default:
+                    return res.status(400).send('Invalid type');
             }
         } catch (err) {
             console.log(err);
