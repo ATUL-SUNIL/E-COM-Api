@@ -24,7 +24,7 @@ export default class OrderRepository{
 
             const newOrder=new OrderModel
                 (new ObjectId(userId),totalAmount,new Date());
-            await db.collection(this.collection).insertOne(newOrder,session) ;
+            await db.collection(this.collection).insertOne(newOrder,{session}) ;
             
             //3. reduce the stock
 
