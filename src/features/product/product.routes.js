@@ -16,43 +16,34 @@ const productController = new ProductController();
 
 
 productRouter.get(
-    '/filter',(req,res)=>{
-        productController.filterProducts(req,res)
-    }
-    
-);
-
-productRouter.post('/rate',(req,res)=>{
-    productController.rateProduct(req,res)
-});
-
-productRouter.get(
-    '/', 
-    (req,res)=>{
-        productController.getAllProducts(req,res)
-    }
+    '/filter',
+    (req,res,next)=>productController.filterProducts(req,res,next)
 );
 
 productRouter.post(
-    '/', 
-upload.single('imageUrl'), 
-(req,res)=>{
-    productController.addProduct(req,res)
-}
+    '/rate',
+    (req,res,next)=>productController.rateProduct(req,res,next)
+);
+
+productRouter.get(
+    '/',
+    (req,res,next)=>productController.getAllProducts(req,res,next)
+);
+
+productRouter.post(
+    '/',
+    upload.single('imageUrl'),
+    (req,res,next)=>productController.addProduct(req,res,next)
 );
 
 productRouter.get(
     '/averagePrice',
-    (req,res,next)=>{
-        productController.averagePrice(req,res,next)
-    }
+    (req,res,next)=>productController.averagePrice(req,res,next)
 );
 
 productRouter.get(
     '/:id',
-    (req,res)=>{
-        productController.getOneProduct(req,res)
-    }
+    (req,res,next)=>productController.getOneProduct(req,res,next)
 );
 
 

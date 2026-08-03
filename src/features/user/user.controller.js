@@ -73,10 +73,9 @@
                 }
             }
         }catch(err){
-        console.log(err);
-        // next(err);
-        throw new ApplicationError("something went wrong",500)
-    }
+            console.log(err);
+            return next(err);
+        }
     }
 
     async resetPassword(req,res,next){
@@ -91,7 +90,7 @@
             res.status(200).send("password is reset")
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500)
+            return next(err);
         }
     }
  }

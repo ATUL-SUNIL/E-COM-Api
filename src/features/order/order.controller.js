@@ -12,7 +12,7 @@ export default class OrderController{
             res.status(201).send("order is created")
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500 )        
+            return next(err);
         }
     }
 }

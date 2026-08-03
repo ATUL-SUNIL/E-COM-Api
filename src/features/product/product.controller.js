@@ -7,25 +7,24 @@ export default class ProductController{
     constructor(){
         this.productRepository=new ProductRepository();
     }
-    async getAllProducts(req,res){
+    async getAllProducts(req,res,next){
         try{
         const products =await this.productRepository.getAll();
         res.status(200).send(products);
         }catch (err) {
             console.log(err);
-                // next(err);
-            throw new ApplicationError("something went wrong",500)    
+            return next(err);
     }
     }
 
-    async addProduct(req, res){
+    async addProduct(req, res, next){
         try {
         const {name,price,sizes,categories,description} = req.body;
 
         const newProduct = new ProductModel
         (name,
         description,
-        parseFloat(price),     
+        parseFloat(price),
         req?.file?.filename,
         categories,
         sizes?.split(','));
@@ -34,15 +33,12 @@ export default class ProductController{
         res.status(201).send(createdRecord);
         } catch (err) {
             console.log(err);
-                // next(err);
-            throw new ApplicationError("something went wrong",500)
-        
-        
+            return next(err);
     }
 }
 
     async rateProduct(req,res){
-        
+
         try {
             const userId=req.userId;
             const productId=req.body.productId;
@@ -56,10 +52,10 @@ export default class ProductController{
         } catch (err) {
             return res.status(400).send(err.message);
         }
-        
+
     }
 
-    async getOneProduct(req,res){
+    async getOneProduct(req,res,next){
 
         try{
             const id = req.params.id;
@@ -71,14 +67,13 @@ export default class ProductController{
             }
         catch (err) {
             console.log(err);
-                    // next(err);
-            throw new ApplicationError("something went wrong",500 )
+            return next(err);
         }
 
-        
+
     }
 
-    async filterProducts(req, res) {
+    async filterProducts(req, res, next) {
         try {
             const minPrice = req.query.minPrice;
         const maxPrice = req.query.maxPrice;
@@ -91,9 +86,9 @@ export default class ProductController{
         res.status(200).send(result);
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500 )
+            return next(err);
         }
-        
+
     }
 
     async averagePrice(req,res,next){
@@ -103,7 +98,8 @@ export default class ProductController{
 
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500 )        }
+            return next(err);
+        }
     }
 
 }

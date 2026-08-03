@@ -22,9 +22,7 @@ export class LikeController{
             }
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500)
-            
-            
+            return next(err);
         }
     }
 
@@ -35,9 +33,7 @@ export class LikeController{
             return res.status(200).send(likes)
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500)
-            
-            
+            return next(err);
         }
     }
 }

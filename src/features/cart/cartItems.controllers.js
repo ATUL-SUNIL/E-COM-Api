@@ -5,7 +5,7 @@ export default class cartItemsController{
     constructor(){
         this.cartItemRepository=new CartItemsRepositories();
     }
-    async add(req,res){
+    async add(req,res,next){
         try{
         const {productId,quantity}=req.body;
         const userId=req.userId;
@@ -14,22 +14,22 @@ export default class cartItemsController{
         }
         catch(err){
             console.log(err);
-            throw new ApplicationError("something went wrong",500 )
+            return next(err);
         }
     }
-     async get(req,res){
+     async get(req,res,next){
         try {
         const userId=req.userId;
         const cart=await this.cartItemRepository.get(userId);
         return res.status(201).send(cart);
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500 )
+            return next(err);
         }
-        
+
 
      }
-     async delete(req,res){
+     async delete(req,res,next){
         try {
         const userId=req.userId;
         const cartItemsId=req.params.id;
@@ -44,7 +44,7 @@ export default class cartItemsController{
         }
         } catch (err) {
             console.log(err);
-            throw new ApplicationError("something went wrong",500 )
+            return next(err);
         }
         
      }

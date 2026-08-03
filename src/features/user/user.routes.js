@@ -11,17 +11,18 @@ const userController = new UserController();
 // All the paths to the controller methods.
 // localhost/api/user 
 userRouter.post(
-    '/signup', 
-(req,res,next)=>{userController.signUp(req,res,next)}
+    '/signup',
+    (req,res,next)=>userController.signUp(req,res,next)
 );
 
 userRouter.post(
-    '/signin',  
-    (req,res)=>{userController.signIn(req,res)}
-
+    '/signin',
+    (req,res,next)=>userController.signIn(req,res,next)
 );
 
-userRouter.put('/resetPassword',jwtAuth,
-    (req,res,next)=>{userController.resetPassword(req,res,next)})
+userRouter.put(
+    '/resetPassword',jwtAuth,
+    (req,res,next)=>userController.resetPassword(req,res,next)
+);
 
 export default userRouter;
