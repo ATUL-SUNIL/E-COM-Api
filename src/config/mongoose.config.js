@@ -6,14 +6,11 @@ dotenv.config();
 const url=process.env.DB_URL;
 
 export const connectUsingMongoose = async()=>{
-    try {
-        await mongoose
-         .connect(url,{useNewUrlParser:true,UseUnifiedTopology:true});
-        console.log("MongoDB using mongoose is connected")
-        addCategories()
-        } catch (err) {
-        console.group(err);
-    }
+    // No try/catch swallow — if the connection fails, the error must reach the
+    // startup code so it can abort instead of pretending the server is healthy.
+    await mongoose.connect(url,{useNewUrlParser:true,UseUnifiedTopology:true});
+    console.log("MongoDB using mongoose is connected");
+    await addCategories();
 }
 
 async function addCategories(){

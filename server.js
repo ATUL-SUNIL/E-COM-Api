@@ -83,10 +83,18 @@ server.use((req,res)=>{
     res.status(404).send("API NOT FOUND.Please check our documentation for more info at localhost:3200/api-docs");
 })
 
-// 5. Specify port.
-server.listen(3200,()=>{
-    console.log("Server is running at 3200");
-    connectUsingMongoose()
-    connectToMongoDB()
-});
+// 5. Connect to the database FIRST, then start accepting traffic.
+async function start(){
+    try {
+        await connectUsingMongoose();
+        await connectToMongoDB();
+        server.listen(3200,()=>{
+            console.log("Server is running at 3200");
+        });
+    } catch (err) {
+        console.error("Could not connect to the database — server not started.", err);
+        process.exit(1); // non-zero so an orchestrator halts the rollout
+    }
+}
+start();
 
