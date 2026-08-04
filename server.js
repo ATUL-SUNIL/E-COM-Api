@@ -8,6 +8,7 @@ import jwtAuth from './src/middlewares/jwt.middleware.js';
 import cors from 'cors'
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
+import { globalLimiter, authLimiter } from './src/middlewares/rateLimit.middleware.js';
 // import basicAuthorizer from './src/middlewares/basicAuth.middleware.js';
 import productRouter from './src/features/product/product.routes.js';
 import userRouter from './src/features/user/user.routes.js';
@@ -68,7 +69,11 @@ server.use("/uploads",express.static('uploads'))
 
 server.use(loggerMiddleware);
 
-server.use("/api/users",userRouter)
+// General per-IP cap on all API traffic.
+server.use(globalLimiter);
+
+// Auth routes get a strict, failure-only limiter on top of the global cap.
+server.use("/api/users",authLimiter,userRouter)
 server.use("/api/cartItems",jwtAuth,cartRouter);
 server.use("/api/products",jwtAuth,productRouter);
 server.use("/api/orders",jwtAuth,orderRouter)
