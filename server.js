@@ -6,6 +6,7 @@ import express from 'express';
 import 'express-async-errors';
 import jwtAuth from './src/middlewares/jwt.middleware.js';
 import cors from 'cors'
+import helmet from 'helmet';
 // import basicAuthorizer from './src/middlewares/basicAuth.middleware.js';
 import productRouter from './src/features/product/product.routes.js';
 import userRouter from './src/features/user/user.routes.js';
@@ -22,6 +23,7 @@ import mongoose from "mongoose";
 import LikeRouter from "./src/features/like/like.routes.js";
 // 2. Create Server
 const server = express();
+server.disable('x-powered-by'); // stop advertising the stack
 
 //load all environment variables in applications
 
@@ -42,17 +44,22 @@ server.use(express.json());
 // })
 
 
-        //*CORS policy configuration with library*
-    server.use(cors());//all headers all origins 
+    // CORS — only allow the origins we explicitly name (browser cross-origin guard)
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+        .split(",").map((o) => o.trim()).filter(Boolean);
+    server.use(cors({
+        origin: allowedOrigins.length ? allowedOrigins : false,
+        credentials: true,
+    }));
 
-    
-//                  using basic auth
-// server.use("/api/products",basicAuthorizer,productRouter);
-//                  using jwt
-
-server.use("/uploads",express.static('uploads'))
-
+// Swagger docs are mounted BEFORE helmet — helmet's strict CSP would block Swagger UI's inline assets.
 server.use("/api-docs",swagger.serve,swagger.setup(apiDocs))
+
+// Security headers (CSP, X-Content-Type-Options: nosniff, frameguard, HSTS…) for everything below.
+server.use(helmet());
+
+// Uploaded files come AFTER helmet so they inherit nosniff + CSP (defense-in-depth for the upload XSS).
+server.use("/uploads",express.static('uploads'))
 
 server.use(loggerMiddleware);
 
