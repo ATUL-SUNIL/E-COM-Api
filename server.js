@@ -7,6 +7,7 @@ import 'express-async-errors';
 import jwtAuth from './src/middlewares/jwt.middleware.js';
 import cors from 'cors'
 import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
 // import basicAuthorizer from './src/middlewares/basicAuth.middleware.js';
 import productRouter from './src/features/product/product.routes.js';
 import userRouter from './src/features/user/user.routes.js';
@@ -57,6 +58,10 @@ server.use("/api-docs",swagger.serve,swagger.setup(apiDocs))
 
 // Security headers (CSP, X-Content-Type-Options: nosniff, frameguard, HSTS…) for everything below.
 server.use(helmet());
+
+// Strip any $-prefixed / dotted keys from body, query & params so a client can
+// never smuggle a MongoDB operator into a query (defense-in-depth for 2.1 / 2.8).
+server.use(mongoSanitize());
 
 // Uploaded files come AFTER helmet so they inherit nosniff + CSP (defense-in-depth for the upload XSS).
 server.use("/uploads",express.static('uploads'))
