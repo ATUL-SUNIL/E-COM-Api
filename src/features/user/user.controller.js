@@ -26,7 +26,6 @@
  import UserRepository from "./user.repository.js";
  import { ApplicationError } from "../../error-handler/applicationEror.js";
  import bcrypt from 'bcrypt'
- const PASSWORD_PATTERN=/^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/;
  export default class UserController{
 
     constructor(){
@@ -34,10 +33,8 @@
     }
     async signUp(req,res,next){
         try{
+        // input already validated by the route's Zod schema (name/email/password/type)
         const{name,email,password,type}=req.body;
-        if(!PASSWORD_PATTERN.test(password)){
-            return res.status(400).send("password should be 8-12 characters and have a special character");
-        }
         const hashedPassword=await bcrypt.hash(password,12);
         const user=new UserModel(name,email,hashedPassword,type);
         
@@ -79,15 +76,22 @@
     }
 
     async resetPassword(req,res,next){
-        const {newPassword}=req.body;
-        const userId=req.userId;
-        if(!PASSWORD_PATTERN.test(newPassword)){
-            return res.status(400).send("password should be 8-12 characters and have a special character");
-        }
-        const hashedPassword=await bcrypt.hash(newPassword,12);
         try {
+            // currentPassword + newPassword shapes validated by the route's Zod schema
+            const {currentPassword,newPassword}=req.body;
+            const userId=req.userId;
+            const user=await this.userRepository.findById(userId);
+            if(!user){
+                return res.status(404).send("user not found");
+            }
+            // must prove knowledge of the current password before changing it
+            const passwordMatches=await bcrypt.compare(currentPassword,user.password);
+            if(!passwordMatches){
+                return res.status(400).send("current password is incorrect");
+            }
+            const hashedPassword=await bcrypt.hash(newPassword,12);
             await this.userRepository.resetPassword(userId,hashedPassword);
-            res.status(200).send("password is reset")
+            res.status(200).send("password is reset");
         } catch (err) {
             console.log(err);
             return next(err);

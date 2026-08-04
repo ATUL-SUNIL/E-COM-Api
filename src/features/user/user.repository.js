@@ -46,6 +46,15 @@ export default class UserRepository{
         
         }
 
+    async findById(id){
+        try{
+            return await userModel.findById(id);
+        }catch(err){
+            console.log(err);
+            throw new ApplicationError("something went wrong with database",500)
+        }
+    }
+
     async resetPassword(userId,newPassword){
         try {
             let user=await userModel.findById(userId);

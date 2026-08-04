@@ -4,7 +4,8 @@
 import express from 'express';
 import ProductController from './product.controller.js';
 import {upload} from '../../middlewares/fileupload.middleware.js';
-import UserController from '../user/user.controller.js';
+import { validate } from '../../middlewares/validate.middleware.js';
+import { filterSchema, rateSchema, addProductSchema, productIdSchema } from './product.validation.js';
 
 // 2. Initialize Express router.
 const productRouter = express.Router();
@@ -17,11 +18,13 @@ const productController = new ProductController();
 
 productRouter.get(
     '/filter',
+    validate(filterSchema),
     (req,res,next)=>productController.filterProducts(req,res,next)
 );
 
 productRouter.post(
     '/rate',
+    validate(rateSchema),
     (req,res,next)=>productController.rateProduct(req,res,next)
 );
 
@@ -33,6 +36,7 @@ productRouter.get(
 productRouter.post(
     '/',
     upload.single('imageUrl'),
+    validate(addProductSchema),
     (req,res,next)=>productController.addProduct(req,res,next)
 );
 
@@ -43,6 +47,7 @@ productRouter.get(
 
 productRouter.get(
     '/:id',
+    validate(productIdSchema),
     (req,res,next)=>productController.getOneProduct(req,res,next)
 );
 
