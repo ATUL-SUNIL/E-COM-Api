@@ -59,7 +59,7 @@
                 const result=await bcrypt.compare(req.body.password,user.password)
                 if(result){
                     //1. create token
-                    const token=jwt.sign({userId:user._id,email:user.email},
+                    const token=jwt.sign({userId:user._id,email:user.email,type:user.type},
                     process.env.JWT_SECRET,
                     {expiresIn:'1h'})
             //2. send token

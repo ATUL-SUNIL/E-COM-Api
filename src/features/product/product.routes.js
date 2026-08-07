@@ -5,6 +5,7 @@ import express from 'express';
 import ProductController from './product.controller.js';
 import {upload} from '../../middlewares/fileupload.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
+import { requireRole } from '../../middlewares/role.middleware.js';
 import { filterSchema, rateSchema, addProductSchema, productIdSchema } from './product.validation.js';
 
 // 2. Initialize Express router.
@@ -35,6 +36,7 @@ productRouter.get(
 
 productRouter.post(
     '/',
+    requireRole('seller'), // only sellers may create products (reject before parsing the upload)
     upload.single('imageUrl'),
     validate(addProductSchema),
     (req,res,next)=>productController.addProduct(req,res,next)

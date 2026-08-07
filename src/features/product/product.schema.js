@@ -7,6 +7,8 @@ export const productSchema=new mongoose.Schema({
     description :String,
     imageUrl:String,
     inStock:Number,
+    sellerId:{type:mongoose.Schema.Types.ObjectId,ref:'user'}, // owner — the seller who created it
+
     reviews:[
         {
             type:mongoose.Schema.Types.ObjectId,

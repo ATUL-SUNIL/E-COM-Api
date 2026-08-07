@@ -28,6 +28,7 @@ export default class ProductController{
         req?.file?.filename,
         categories,
         sizes?.split(','));
+        newProduct.sellerId = req.userId; // record the owning seller
 
         const createdRecord=await this.productRepository.add(newProduct);
         res.status(201).send(createdRecord);
