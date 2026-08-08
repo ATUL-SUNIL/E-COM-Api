@@ -93,6 +93,11 @@ server.use((err,req,res,next)=>{
     if(err instanceof ApplicationError){
         return res.status(err.code).send(err.message);
     }
+    if(err && err.name === 'MulterError'){
+        // e.g. LIMIT_FILE_SIZE, LIMIT_FILE_COUNT — bad upload = client error
+        const msg = err.code === 'LIMIT_FILE_SIZE' ? 'file too large (max 2MB)' : 'invalid file upload';
+        return res.status(400).send(msg);
+    }
     return res.status(500).send('something went wrong,please try again later');
 })
 //4.middleware to handle 404
