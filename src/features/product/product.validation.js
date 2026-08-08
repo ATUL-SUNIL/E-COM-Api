@@ -25,6 +25,7 @@ export const addProductSchema = {
     // required: the repository splits this unconditionally, so absence would crash
     categories: z.string().trim().min(1, "at least one category is required"),
     sizes: z.string().optional(), // controller uses sizes?.split(), so absence is safe
+    inStock: z.coerce.number().int().nonnegative().default(100),
   }),
 };
 

@@ -29,6 +29,7 @@ export default class ProductController{
         categories,
         sizes?.split(','));
         newProduct.sellerId = req.userId; // record the owning seller
+        newProduct.inStock = req.body.inStock; // starting inventory (validated; defaults to 100)
 
         const createdRecord=await this.productRepository.add(newProduct);
         res.status(201).send(createdRecord);

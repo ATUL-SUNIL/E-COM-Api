@@ -15,10 +15,12 @@ export default class OrderRepository{
             
             const db=getDB();
             session.startTransaction();
-            //1. get cartitems and calculate totalamount
+            //1. get cart items and calculate total amount
             const items=await this.getTotalAmount(userId,session);
+            if(!items.length){
+                throw new ApplicationError("cart is empty",400);
+            }
             const totalAmount=items.reduce((acc,item)=>acc+item.totalAmount,0);
-            console.log(totalAmount);
 
             //2.create an order record
 
@@ -26,16 +28,18 @@ export default class OrderRepository{
                 (new ObjectId(userId),totalAmount,new Date());
             await db.collection(this.collection).insertOne(newOrder,{session}) ;
             
-            //3. reduce the stock
-
-            for(let item of items){
-                await db.collection("products").updateOne({
-                    _id: item.productId
-                },
-                {
-                    $inc:{inStock: -item.quantity}
-                },{session}
-            )
+            //3. reduce stock — only if enough is available (atomic: filter + update in one op)
+            for(const item of items){
+                const result=await db.collection("products").updateOne(
+                    { _id:item.productId, inStock:{ $gte:item.quantity } },
+                    { $inc:{ inStock:-item.quantity } },
+                    { session }
+                );
+                if(result.modifiedCount===0){
+                    throw new ApplicationError(
+                        `insufficient stock for ${item.productInfo?.name || item.productId}`,409
+                    );
+                }
             }
 
             //4. clear cart 
@@ -49,10 +53,10 @@ export default class OrderRepository{
         } catch (err) {
             await session.abortTransaction();
             session.endSession();
-           
             console.log(err);
-            throw new ApplicationError
-                ("something went wrong with database",500)
+            // preserve specific errors (empty cart 400, insufficient stock 409); wrap the rest
+            if(err instanceof ApplicationError) throw err;
+            throw new ApplicationError("something went wrong with database",500);
         }
     }
 
