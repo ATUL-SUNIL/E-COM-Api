@@ -26,6 +26,9 @@
  import UserRepository from "./user.repository.js";
  import { ApplicationError } from "../../error-handler/applicationEror.js";
  import bcrypt from 'bcrypt'
+ // Compared against when no user is found, so sign-in takes the same time whether
+ // or not the account exists (defeats the timing side-channel).
+ const DUMMY_HASH = bcrypt.hashSync("invalid-placeholder-password", 12);
  export default class UserController{
 
     constructor(){
@@ -51,24 +54,19 @@
     async signIn(req,res,next){
         try{
             const user=await this.userRepository.findByEmail(req.body.email)
-            if(!user){
-                return res.status(400).send("email not found")
+            // Always run a compare — dummy hash when the user doesn't exist — so
+            // both the message AND the timing are identical (no enumeration oracle).
+            const hash = user ? user.password : DUMMY_HASH;
+            const passwordMatches = await bcrypt.compare(req.body.password, hash);
+            if(!user || !passwordMatches){
+                return res.status(401).send("invalid email or password");
             }
-            else{
-                //compare password with hashed password
-                const result=await bcrypt.compare(req.body.password,user.password)
-                if(result){
-                    //1. create token
-                    const token=jwt.sign({userId:user._id,email:user.email,type:user.type},
-                    process.env.JWT_SECRET,
-                    {expiresIn:'1h'})
-            //2. send token
-                    return res.status(200).send(token);
-                }
-                else{
-                    return res.status(400).send("incorrect password")
-                }
-            }
+            const token=jwt.sign(
+                {userId:user._id,email:user.email,type:user.type,tv:user.tokenVersion||0},
+                process.env.JWT_SECRET,
+                {expiresIn:'1h'}
+            );
+            return res.status(200).send(token);
         }catch(err){
             console.log(err);
             return next(err);

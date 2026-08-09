@@ -60,6 +60,7 @@ export default class UserRepository{
             let user=await userModel.findById(userId);
             if(user){
                 user.password=newPassword;
+                user.tokenVersion=(user.tokenVersion||0)+1; // revoke all existing tokens
                 await user.save();
             }else{
                 throw new Error("user not found");

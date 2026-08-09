@@ -5,7 +5,8 @@ export const userSchema=new mongoose.Schema({
     email:{type:String,unique:true,
             match:[/.+\@.+\../,"please enter a valid email"]},
     password:String,
-    type:{type:String,enum:['customer','seller']}
+    type:{type:String,enum:['customer','seller']},
+    tokenVersion:{type:Number,default:0} // bumped to revoke all outstanding tokens
 })
 
 
