@@ -2,6 +2,7 @@ import UserModel from "../user/user.model.js";
 import ProductModel from "./product.model.js";
 import ProductRepository from "./product.repositories.js";
 import { ApplicationError } from "../../error-handler/applicationEror.js";
+import { paginate } from "../../utils/pagination.js";
 export default class ProductController{
 
     constructor(){
@@ -9,7 +10,8 @@ export default class ProductController{
     }
     async getAllProducts(req,res,next){
         try{
-        const products =await this.productRepository.getAll();
+        const {skip,limit}=paginate(req.query);
+        const products =await this.productRepository.getAll(skip,limit);
         res.status(200).send(products);
         }catch (err) {
             console.log(err);
@@ -39,8 +41,7 @@ export default class ProductController{
     }
 }
 
-    async rateProduct(req,res){
-
+    async rateProduct(req,res,next){
         try {
             const userId=req.userId;
             const productId=req.body.productId;
@@ -52,9 +53,10 @@ export default class ProductController{
             );
             return res.status(200).send("rating had been added");
         } catch (err) {
-            return res.status(400).send(err.message);
+            // don't leak internal error text to the client — route through the handler
+            console.log(err);
+            return next(err);
         }
-
     }
 
     async getOneProduct(req,res,next){

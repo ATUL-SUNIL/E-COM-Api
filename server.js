@@ -88,7 +88,12 @@ server.use((err,req,res,next)=>{
     console.log(err);
 
     if(err instanceof mongoose.Error.ValidationError){
-        return res.status(400).send(err.message);
+        // generic — don't leak collection/field/enum names from the raw message
+        return res.status(400).send("invalid input");
+    }
+    if(err && err.code === 11000){
+        // duplicate key (e.g. email already registered, like already exists)
+        return res.status(409).send("that record already exists");
     }
     if(err instanceof ApplicationError){
         return res.status(err.code).send(err.message);

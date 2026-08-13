@@ -49,12 +49,13 @@ class ProductRepository{
         }
     }
 
-    async getAll(){
+    async getAll(skip=0,limit=20){
         try {
             const db=getDB();
             const collection=db.collection(this.colection);
-            const products= await collection.find().toArray();
-            
+            // capped page instead of loading the whole collection into memory
+            const products= await collection.find().skip(skip).limit(limit).toArray();
+
             return products;
         } catch (err) {
             console.log(err);

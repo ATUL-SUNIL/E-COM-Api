@@ -17,9 +17,11 @@ export default class UserRepository{
             console.log(err);
             if(err instanceof mongoose.Error.ValidationError){
                 throw err;
-            }else{
-                throw new ApplicationError("something went wrong with database",500)
             }
+            if(err && err.code===11000){
+                throw new ApplicationError("email already registered",409);
+            }
+            throw new ApplicationError("something went wrong with database",500)
         }
     }
 

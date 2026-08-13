@@ -14,16 +14,7 @@ export const likeSchema = new mongoose.Schema({
         type:String,
         enum:['product','category']
     }
-}).pre('save',(next)=>{
-    console.log("new like coming in");
-    next();
-}).post('save',(doc)=>{
-    console.log("like is saved")
-    console.log(doc)
-}).pre('find',(next)=>{
-    console.log("retrieving likes");
-    next();
-}).post('find',(doc)=>{
-    console.log("find is completed")
-    console.log(doc)
-})
+});
+
+// one like per user per item — prevents duplicate likes / inflated counts
+likeSchema.index({ user: 1, likeable: 1 }, { unique: true });
