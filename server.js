@@ -75,7 +75,8 @@ server.use(globalLimiter);
 // Auth routes get a strict, failure-only limiter on top of the global cap.
 server.use("/api/users",authLimiter,userRouter)
 server.use("/api/cartItems",jwtAuth,cartRouter);
-server.use("/api/products",jwtAuth,productRouter);
+// products: reads are public (browse without login); writes are guarded inside the router
+server.use("/api/products",productRouter);
 server.use("/api/orders",jwtAuth,orderRouter)
 server.use("/api/likes",jwtAuth,LikeRouter)
 

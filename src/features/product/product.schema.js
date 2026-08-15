@@ -6,6 +6,8 @@ export const productSchema=new mongoose.Schema({
     category:String,
     description :String,
     imageUrl:String,
+    images:[String], // gallery — ordered image URLs ([0] is the cover)
+    video:String,    // optional product video URL
     inStock:Number,
     sellerId:{type:mongoose.Schema.Types.ObjectId,ref:'user'}, // owner — the seller who created it
 

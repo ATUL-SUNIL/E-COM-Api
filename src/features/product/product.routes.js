@@ -4,6 +4,7 @@
 import express from 'express';
 import ProductController from './product.controller.js';
 import {upload} from '../../middlewares/fileupload.middleware.js';
+import jwtAuth from '../../middlewares/jwt.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { requireRole } from '../../middlewares/role.middleware.js';
 import { filterSchema, rateSchema, addProductSchema, productIdSchema } from './product.validation.js';
@@ -25,6 +26,7 @@ productRouter.get(
 
 productRouter.post(
     '/rate',
+    jwtAuth, // rating requires login (identifies who rated)
     validate(rateSchema),
     (req,res,next)=>productController.rateProduct(req,res,next)
 );
@@ -36,7 +38,8 @@ productRouter.get(
 
 productRouter.post(
     '/',
-    requireRole('seller'), // only sellers may create products (reject before parsing the upload)
+    jwtAuth, // must be logged in…
+    requireRole('seller'), // …and a seller (reject before parsing the upload)
     upload.single('imageUrl'),
     validate(addProductSchema),
     (req,res,next)=>productController.addProduct(req,res,next)
