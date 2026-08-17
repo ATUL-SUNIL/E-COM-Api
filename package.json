@@ -4,6 +4,8 @@
   "description": "APIs for E-Commerce applications",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
