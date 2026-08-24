@@ -111,7 +111,15 @@ server.use((req,res)=>{
     res.status(404).send("API NOT FOUND.Please check our documentation for more info at localhost:3200/api-docs");
 })
 
-// 5. Connect to the database FIRST, then start accepting traffic.
+// 5. Refuse to boot without a real signing secret. A missing value only
+// fails later on sign-in; the .env.example placeholder is a known secret.
+const jwtSecret = (process.env.JWT_SECRET || "").trim();
+if (!jwtSecret || jwtSecret === "replace-with-a-long-random-secret") {
+    console.error("JWT_SECRET is missing or still the example placeholder — server not started.");
+    process.exit(1);
+}
+
+// 6. Connect to the database FIRST, then start accepting traffic.
 async function start(){
     try {
         await connectUsingMongoose();
