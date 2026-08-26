@@ -82,10 +82,13 @@ export default class ProductController{
             const minPrice = req.query.minPrice;
         const maxPrice = req.query.maxPrice;
         const category = req.query.category;
+        const {skip,limit}=paginate(req.query);
         const result = await this.productRepository.filter(
             minPrice,
             maxPrice,
-            category
+            category,
+            skip,
+            limit
         );
         res.status(200).send(result);
         } catch (err) {

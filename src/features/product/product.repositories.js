@@ -74,7 +74,7 @@ class ProductRepository{
         }
     }
 
-    async filter(minPrice,maxPrice,category){
+    async filter(minPrice,maxPrice,category,skip=0,limit=20){
         try {
             const db=getDB();
             const collection=db.collection(this.colection);
@@ -89,9 +89,10 @@ class ProductRepository{
                 
                 filterExpression.category=category;
             }
+            // same page cap as getAll — this route is public, so an uncapped
+            // .toArray() is a scrape / memory risk
             return collection.find(filterExpression)
-            //.project({name:1,price:1}) only send name and proce attributes for exclusion give 0
-            //$slice for limiting number 
+            .skip(skip).limit(limit)
             .toArray();
         } catch (err) {
             console.log(err);
