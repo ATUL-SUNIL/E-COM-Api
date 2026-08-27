@@ -29,7 +29,9 @@ server.disable('x-powered-by'); // stop advertising the stack
 
 //load all environment variables in applications
 
-server.use(express.json());
+// JSON APIs here are tiny (auth, cart, rate). Cap the body so a huge POST
+// cannot sit in memory. Multipart uploads use multer's own 2MB limit.
+server.use(express.json({ limit: "16kb" }));
 
         //*CORS policy configuration without library*
 // server.use((req,res,next)=>{
@@ -103,6 +105,9 @@ server.use((err,req,res,next)=>{
         // e.g. LIMIT_FILE_SIZE, LIMIT_FILE_COUNT — bad upload = client error
         const msg = err.code === 'LIMIT_FILE_SIZE' ? 'file too large (max 2MB)' : 'invalid file upload';
         return res.status(400).send(msg);
+    }
+    if(err && (err.type === 'entity.too.large' || err.status === 413)){
+        return res.status(413).send("request body too large");
     }
     return res.status(500).send('something went wrong,please try again later');
 })
