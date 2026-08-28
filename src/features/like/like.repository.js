@@ -9,14 +9,20 @@ export class LikeRepository{
     // Idempotent: liking the same item twice returns the existing like instead of
     // creating a duplicate (works with the unique {user,likeable} index).
     async #like(userId, likeableId, types){
+        const filter={ user:new ObjectId(userId), likeable:new ObjectId(likeableId), types };
         try {
-            const filter={ user:new ObjectId(userId), likeable:new ObjectId(likeableId), types };
             return await LikeModel.findOneAndUpdate(
                 filter,
                 { $setOnInsert: filter },
                 { upsert:true, new:true, setDefaultsOnInsert:true }
             );
         } catch (err) {
+            // Two concurrent first-likes can both miss and race the unique index.
+            // Treat that as success: the like already exists.
+            if(err && err.code===11000){
+                const existing=await LikeModel.findOne(filter);
+                if(existing) return existing;
+            }
             console.log(err);
             throw new ApplicationError("something went wrong with database",500)
         }
