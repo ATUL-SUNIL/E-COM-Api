@@ -1,7 +1,6 @@
 import mongoose from "mongoose"
 import { likeSchema } from "./like.schema.js"
 import { ObjectId } from "mongodb"
-import UserModel from '../user/user.schema.js';
 import { ApplicationError } from "../../error-handler/applicationEror.js";
 
 const LikeModel=mongoose.model('Like',likeSchema)
